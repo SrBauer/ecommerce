@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title> CompreFunko Store</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+         :root {
+            --bs-link-color: #EFF0EB;
+            --theme-primary: #5f713b;
+            --theme-surface: #dbdfd0;
+        }
+        
+        footer {
+            background-color: var(--theme-primary);
+            width: 100vw;
+            overflow: hidden;
+        }
+        
+        .main-content {
+            background-color: var(--theme-surface);
+            height: fit-content;
+            min-height: 300px;
+            border-radius: 8px;
+        }
+        
+        .item {
+            background-color: #fff;
+            box-shadow: 0 0 6px #808080;
+            border-radius: 8px;
+        }
+        
+        .item:hover .item-nome {
+            color: var(--theme-primary);
+        }
+        
+        .item .item-nome,
+        .descricao-item-carrinho {
+            font-weight: bold;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .btn-outline-primary {
+            --bs-btn-color: var(--theme-primary);
+            --bs-btn-border-color: var(--theme-primary);
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: var(--theme-primary);
+            --bs-btn-hover-border-color: var(--theme-primary);
+            --bs-btn-focus-shadow-rgb: 13, 110, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: var(--theme-primary);
+            --bs-btn-active-border-color: var(--theme-primary);
+            --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: var(--theme-primary);
+            --bs-btn-disabled-bg: transparent;
+            --bs-btn-disabled-border-color: var(--theme-primary);
+            --bs-gradient: none;
+        }
+    </style>
+
+    <script src="src/js/criarItens.js"></script>
+    <script src="src/js/carrinho.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</head>
+
+<body cz-shortcut-listen="true" class="overflow-x-hidden">
+
+    <header class="border-bottom" style="height: 140px;">
+        <div class="container-fluid d-grid gap-3 align-items-center px-5" style="grid-template-columns: 1fr 1fr; background-color: var(--theme-primary);">
+            <a href="index.html" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none" aria-expanded="false">
+                <img src="src\img\compreFunkoHeader.png" alt="mdo" class="img-fluid" style="height: 140px;">
+            </a>
+
+            <div class="d-flex align-items-center">
+                <div class="input-group mx-4">
+                    <input id="campo-busca" type="text" class="form-control" placeholder="Pesquisa" aria-label="Pesquisa" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-light" type="button" id="button-addon2" onclick="filtrar();">Pesquisar</button>
+                </div>
+
+                <a href="#" class="d-block link-body-emphasis text-decoration-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                    <div class="icon-demo d-flex align-items-center justify-content-center py-6" role="img" aria-label="Cart3 - large preview">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart3" style="color: var(--bs-link-color)" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Body da tela principal -->
+    <div class="py-4" style="min-height: calc(100vh - 230px);">
+        <div class="container main-content py-3 text-center">
+            <div id="containerProdutos" class="row g-3" style="display: grid; grid-template-columns: repeat(5, 20%);"></div>
+        </div>
+    </div>
+
+    <!-- SideBar do carrinho -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel">Carrinho</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="border-bottom justify-content-center mb-2 pb-3 row">
+                <button type="button" class="col btn btn-outline-danger m-2" onclick="carrinho.limparCarrinho();">Limpar carrinho</button>
+            </div>
+            <div id="itens-carrinho"></div>
+
+            <div class="border-top justify-content-center mt-2 pt-3 row">
+                <div class="col-6" style="font-weight: bold; text-overflow: ellipsis; word-break: break-all; white-space: nowrap; overflow: hidden;">Quantidade</div>
+                <div id="carrinho-quantidade" class="col-6 text-lg-end"></div>
+            </div>
+
+            <div class="justify-content-center mt-2 row">
+                <div class="col-6" style="font-weight: bold; text-overflow: ellipsis; word-break: break-all; white-space: nowrap; overflow: hidden;">Total</div>
+                <div id="carrinho-total" class="col-6 text-lg-end"></div>
+                <button type="button" class="col btn btn-outline-primary m-2">Comprar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal / Tela detalhada do produto -->
+    <div class="modal fade modal-lg" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="border: none;">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4 align-items-start">
+                        <div class="col-5 mt-0">
+                            <img id="detalhes-produto-imagem" src="" alt="mdo" class="img-fluid">
+                        </div>
+                        <div class="col-7 d-flex align-items-start flex-column mt-0 mb-3">
+                            <div id="detalhes-produto-nome" class="p-2" style="font-weight: bold; font-size: 2rem;"></div>
+                            <div id="detalhes-produto-descricao" class="p-2"></div>
+                        </div>
+                    </div>
+                    <div class="row mx-3">
+                        <div class="col-5"></div>
+                        <div id="detalhes-produto-valor" class="col-3" style="font-size: 1.5rem;font-weight: 700;"></div>
+                        <div class="qty col-4 row">
+                            <input id="campo-quantidade-venda" type="number" class="count form-control" name="qty" min="1" value="1">
+                            <button id="button-adicionar-carrinho" type="button" class="mt-2 btn btn-outline-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"></path>
+                                </svg>
+                                Adicionar ao carrinho
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-adicionado-carrinho" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 m-3" style="z-index: 2000; background-color: #5F713B !important;" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Produto(s) adicionado(s) ao carrinho.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <div id="toast-quantidade-invalida" class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3" style="z-index: 2000;" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                A quantidade mínima é 1.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <footer style="height: 90px;">
+        <div class="row justify-content-center">
+            <a href="/" style="margin: auto; width: auto;">
+                <img src="src\img\compreFunkoFooter.png" alt="mdo" width="160" height="96" class="img-fluid">
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        produtos = [{
+            valor: 12,
+            nome: 'POP! GROOT',
+            descricao: 'Take off on a galactic adventure with Pop! Groot on his next mission with his family of misfits. Complete your Guardians of the Galaxy: Volume 3 collection with this Flora Colossus hero. Groot has done a lot of growing up and is ready to uproot any threats in his way. Vinyl bobblehead is approximately 4.25-inches tall.',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw4c62adf3/images/funko/67510-2.png?sw=800&sh=800'
+        }, {
+            valor: 12,
+            nome: 'POP! IRON SPIDER UNMASKED WITH GAUNTLET',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw43e49c5f/images/funko/upload/68253_MARVEL_Endgame_Spiderman_Gauntlet_POP_GLAM-1-WEB.png?sw=800&sh=800'
+        }, {
+            valor: 15,
+            nome: 'POP! PHOTON (GLOW)',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dwf299aa0a/images/funko/upload/68286_POPVinyl_Marvels_POP5_GLAM-1-D-1-WEB.png?sw=800&sh=800'
+        }, {
+            valor: 12,
+            nome: 'POP! THANOS',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dwfc763cf2/images/funko/36672-2.png?sw=800&sh=800'
+        }, {
+            valor: 12,
+            nome: 'POP! CIVIL WAR: SPIDER-MAN',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw7308c0b5/images/funko/upload/70097_POPMarvel_CWBAS_SpiderMan_GLAM-AM-WEB.png?sw=800&sh=800'
+        }, {
+            valor: 12,
+            nome: 'POP! THOR',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dwcf89ede0/images/funko/62421-3.png?sw=800&sh=800'
+        }, {
+            valor: 15,
+            nome: 'POP! CYCLOPS (X-MEN \'97)',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw56485754/images/funko/upload/74814_POPVinyl_TeenSpirit_POP3_GLAM-1-FW-WEB.png?sw=800&sh=800'
+        }, {
+            valor: 6.99,
+            nome: 'POP! DOCTOR STRANGE',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dwe069d03c/images/funko/60917-3.png?sw=800&sh=800'
+        }, {
+            valor: 12,
+            nome: 'POP! CIVIL WAR: IRON MAN',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw79422eab/images/funko/upload/70098_POPMarvel_CWBAS_IronMan_GLAM-1-AM-WEB.png?sw=800&sh=800'
+        }, {
+            valor: 12,
+            nome: 'POP! CAPTAIN AMERICA',
+            imagem: 'https://funko.com/dw/image/v2/BGTS_PRD/on/demandware.static/-/Sites-funko-master-catalog/default/dw50b97b30/images/funko/7223-2.png?sw=800&sh=800'
+        }];
+
+        //let params = new URLSearchParams(document.location.search);
+        //let name = params.get("teste"); // is the string"Jonathan"
+        iniciarTela();
+
+        function iniciarTela() {
+            window.carrinho = new Carrinho();
+            buscarProdutos(produtos);
+            iniciarEventos();
+        }
+
+        function iniciarEventos() {}
+
+        function filtrar() {
+            const campo = document.getElementById('campo-busca'),
+                value = campo.value.toLocaleLowerCase();
+
+            let produtosFiltrados = produtos;
+            if (value) {
+                produtosFiltrados = produtos.filter(x => x.nome.toLocaleLowerCase().includes(value) || (x.descricao && x.descricao.toLocaleLowerCase().includes(value)));
+            }
+
+            limparDivProdutos();
+            buscarProdutos(produtosFiltrados);
+        }
+
+        function limparDivProdutos() {
+            const divProdutos = document.getElementById('containerProdutos');
+            while (divProdutos.firstChild) {
+                divProdutos.removeChild(divProdutos.firstChild);
+            }
+        }
+
+        function buscarProdutos(produtos) {
+            let produto;
+            for (produto of produtos) {
+                criarProduto(produto);
+            }
+        }
+
+        function altertarModel(produto) {
+            const myModal = new bootstrap.Modal('#modalDetalhes')
+
+            const campoQuantidade = document.getElementById('campo-quantidade-venda');
+            campoQuantidade.value = 1;
+
+            const imagem = document.getElementById('detalhes-produto-imagem');
+            imagem.src = produto.imagem;
+
+            const nome = document.getElementById('detalhes-produto-nome');
+            nome.innerText = produto.nome;
+
+            const descricao = document.getElementById('detalhes-produto-descricao');
+            if (produto.descricao) {
+                descricao.innerText = produto.descricao;
+            } else {
+                descricao.innerHTML = '<i> (Sem descrição)</i>';
+            }
+
+            const valor = document.getElementById('detalhes-produto-valor');
+            valor.innerText = getDescricaoValor(produto.valor);
+
+            const botao = document.getElementById('button-adicionar-carrinho');
+            botao.onclick = () => {
+                let value = campoQuantidade.value;
+                let toastAdicionado = new bootstrap.Toast('#toast-adicionado-carrinho'),
+                    toastQuantidadeInvalida = new bootstrap.Toast('#toast-quantidade-invalida');
+
+                if (toastAdicionado.isShown()) {
+                    toastAdicionado.hide();
+                }
+
+                if (toastQuantidadeInvalida.isShown()) {
+                    toastQuantidadeInvalida.hide();
+                }
+
+                if (value) {
+                    value = parseInt(campoQuantidade.value);
+                    if (value > 0) {
+                        carrinho.adicionarItem(produto, value)
+
+                        toastAdicionado.show();
+                        setTimeout(() => myModal.hide(), 300);
+                        return;
+                    }
+                }
+
+                toastQuantidadeInvalida.show();
+            };
+
+            myModal.show();
+        }
+    </script>
+
+</body>
+
+</html>
